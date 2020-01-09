@@ -109,10 +109,12 @@ public class KKXImageContentView: UIView {
     
     /// 根据图片数量显示imageView
     private func reloadImageViews() {
-        for i in 0..<imageViews.count {
+        for i in 0..<numberOfImages() {
             let imageView = imageViews[i]
             imageView.isHidden = (i >= numberOfImages())
-            delegate?.imageContent(self, imageView: imageView, at: i)
+            if i < numberOfImages() {
+                delegate?.imageContent(self, imageView: imageView, at: i)
+            }
         }
         setNeedsLayout()
     }

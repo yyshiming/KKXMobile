@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class KKXTextView: UITextView {
+open class KKXTextView: UITextView {
     
     // MARK: -------- Properties --------
     
@@ -23,7 +23,7 @@ public class KKXTextView: UITextView {
     
     public var placeholderLabel: UILabel = UILabel()
     
-    public override var font: UIFont? {
+    open override var font: UIFont? {
         get {
             return super.font
         }
@@ -49,16 +49,16 @@ public class KKXTextView: UITextView {
         removeObserver(self, forKeyPath: #keyPath(text), context: nil)
     }
     
-    override init(frame: CGRect, textContainer: NSTextContainer?) {
+    public override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
         configurations()
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    public override func awakeFromNib() {
+    open override func awakeFromNib() {
         super.awakeFromNib()
         configurations()
     }
@@ -88,7 +88,7 @@ public class KKXTextView: UITextView {
         }
     }
     
-    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         switch keyPath {
         case #keyPath(text):
             placeholderLabel.isHidden = !text.isEmpty
@@ -100,7 +100,7 @@ public class KKXTextView: UITextView {
     
     // MARK: -------- Layout --------
     
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         
         let left: CGFloat = textContainerInset.left

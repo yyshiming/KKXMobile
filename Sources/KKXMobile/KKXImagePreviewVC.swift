@@ -75,7 +75,7 @@ public class KKXImagePreviewVC: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
     
-    init() {
+    public init() {
         super.init(nibName: nil, bundle: nil)
         self.modalPresentationStyle = .fullScreen
         self.transitioningDelegate = self

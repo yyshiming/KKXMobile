@@ -8,12 +8,12 @@
 import UIKit
 import Photos
 
-public protocol KKXPhotoPreviewDelegate: AnyObject {
-    func photoPreviewNumberOfPhotos(_ preview: KKXImagePreviewVC) -> Int
-    func photoPreview(_ preview: KKXImagePreviewVC, imageFor imageView: UIImageView, at index: Int, completion: (@escaping (UIImage?) -> Void))
+public protocol KKXImagePreviewDelegate: AnyObject {
+    func imagePreviewNumberOfPhotos(_ preview: KKXImagePreviewVC) -> Int
+    func imagePreview(_ preview: KKXImagePreviewVC, imageFor imageView: UIImageView, at index: Int, completion: (@escaping (UIImage?) -> Void))
 }
-extension KKXPhotoPreviewDelegate {
-    public func photoPreview(_ preview: KKXImagePreviewVC, imageFor imageView: UIImageView, at index: Int, completion: (@escaping (UIImage?) -> Void)) { }
+extension KKXImagePreviewDelegate {
+    public func imagePreview(_ preview: KKXImagePreviewVC, imageFor imageView: UIImageView, at index: Int, completion: (@escaping (UIImage?) -> Void)) { }
 }
 
 private let KKXPhotoCellIdentifier = "KKXImagePreviewCell"
@@ -21,7 +21,7 @@ public class KKXImagePreviewVC: UIViewController {
     
     // MARK: -------- Properties --------
     
-    public weak var delegate: KKXPhotoPreviewDelegate?
+    public weak var delegate: KKXImagePreviewDelegate?
     public var tappedViews: [UIImageView]?
     public var currentIndex: Int = 0
     public var placeholder: UIImage?
@@ -35,7 +35,7 @@ public class KKXImagePreviewVC: UIViewController {
         }
     }
     public var photoCount: Int {
-        delegate?.photoPreviewNumberOfPhotos(self) ?? 0
+        delegate?.imagePreviewNumberOfPhotos(self) ?? 0
     }
     
     // MARK: -------- Private Properties --------
@@ -278,7 +278,7 @@ extension KKXImagePreviewVC: UICollectionViewDataSource {
         cell.longPressHandler = { [weak self](image) in
             self?.showAlert(image, index: indexPath.item)
         }
-        delegate?.photoPreview(self, imageFor: cell.scrollView.imageView, at: indexPath.item, completion: { (image) in
+        delegate?.imagePreview(self, imageFor: cell.scrollView.imageView, at: indexPath.item, completion: { (image) in
             cell.resizeImageView(with: image)
         })
         return cell

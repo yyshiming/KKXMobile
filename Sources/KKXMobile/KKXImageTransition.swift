@@ -25,17 +25,22 @@ public class KKXImageTransition: NSObject, UIViewControllerAnimatedTransitioning
 public class KKXImagePresentTransition: KKXImageTransition {
     
     public override func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        
         guard let fromView = transitionContext.view(forKey: .from),
-            let toView = transitionContext.view(forKey: .to),
-            let tapView = tappedView else {
-                return
+            let toView = transitionContext.view(forKey: .to) else {
+            return
         }
         
         let containerView = transitionContext.containerView
         containerView.backgroundColor = .black
-        
         containerView.addSubview(toView)
         toView.frame = containerView.bounds
+        
+        guard let tapView = tappedView else {
+            transitionContext.completeTransition(true)
+            return
+        }
+        
         toView.isHidden = true
         fromView.isHidden = true
 
@@ -77,16 +82,19 @@ public class KKXImagePresentTransition: KKXImageTransition {
 class KKXImageDismissTransition: KKXImageTransition {
     
     public override func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-//        let fromViewController = transitionContext.viewController(forKey: .from)
-        guard let toView = transitionContext.view(forKey: .to),
-            let tapView = tappedView else {
-                return
+        
+        guard let toView = transitionContext.view(forKey: .to) else {
+            return
         }
         
         let containerView = transitionContext.containerView
-        
         containerView.addSubview(toView)
         toView.frame = containerView.bounds
+        
+        guard let tapView = tappedView else {
+            transitionContext.completeTransition(true)
+            return
+        }
         
         // 把点击视图的位置转换到containerView中
         let endFrame = tapView.superview!.convert(tapView.frame, to: containerView)

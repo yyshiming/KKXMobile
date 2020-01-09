@@ -70,9 +70,10 @@ public class KKXImagePreviewVC: UIViewController {
     }()
     
     private let activityView: KKXActivityView = KKXActivityView()
-    
     private var statusBarHidden: Bool = true
-
+    private var statusBarStyle: UIStatusBarStyle = UIApplication.shared.statusBarStyle
+    private var originStatusBarHidden: Bool = true
+    
     // MARK: -------- View Life Cycle --------
     
     deinit {
@@ -91,15 +92,14 @@ public class KKXImagePreviewVC: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        originStatusBarHidden = UIApplication.shared.isStatusBarHidden
         statusBarHidden = true
-        setNeedsStatusBarAppearanceUpdate()
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        statusBarHidden = false
-        setNeedsStatusBarAppearanceUpdate()
+        statusBarHidden = originStatusBarHidden
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
@@ -249,23 +249,27 @@ public class KKXImagePreviewVC: UIViewController {
 extension KKXImagePreviewVC {
 
     public override var shouldAutorotate: Bool {
-        return true
+        true
     }
     
     public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .allButUpsideDown
+        .allButUpsideDown
     }
     
     public override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-        return .portrait
+        .portrait
     }
     
     public override var prefersStatusBarHidden: Bool {
-        return statusBarHidden
+        statusBarHidden
+    }
+    
+    public override var preferredStatusBarStyle: UIStatusBarStyle {
+        statusBarStyle
     }
     
     public override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return .slide
+        .fade
     }
     
 }
@@ -293,23 +297,8 @@ extension KKXImagePreviewVC: UICollectionViewDataSource {
 // MARK: - ======== UICollectionViewDelegate ========
 extension KKXImagePreviewVC: UICollectionViewDelegate {
     
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-    }
-    
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         (cell as? KKXImagePreviewCell)?.resetZoomScale(false)
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        
-    }
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offset = scrollView.contentOffset.x + scrollView.frame.size.width/2
-        let index = Int(offset/scrollView.frame.size.width)
-        if index < photoCount && index != currentIndex {
-            currentIndex = index
-        }
     }
     
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {

@@ -22,6 +22,10 @@ public class KKXImageScrollView: UIScrollView {
 
     // MARK: -------- Init --------
     
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willChangeStatusBarOrientationNotification, object: nil)
+    }
+    
     override init(frame: CGRect) {
         super.init(frame:frame)
         configureSubviews()
@@ -39,6 +43,7 @@ public class KKXImageScrollView: UIScrollView {
     // MARK: -------- Configure --------
     
     private func configureSubviews() {
+        NotificationCenter.default.addObserver(self, selector: #selector(orientationWillChanged), name: UIApplication.willChangeStatusBarOrientationNotification, object: nil)
         delegate = self
         addSubview(imageView)
     }
@@ -78,6 +83,10 @@ public class KKXImageScrollView: UIScrollView {
         contentInset = UIEdgeInsets(top: verticalPadding, left: horizontalPadding, bottom: verticalPadding, right: horizontalPadding)
     }
 
+    @objc private func orientationWillChanged() {
+        setNeedsUpdateContentFrame()
+    }
+    
     // MARK: -------- Layout --------
     
     public override func layoutSubviews() {

@@ -23,7 +23,11 @@ public class KKXImagePreviewVC: UIViewController {
     
     public weak var delegate: KKXImagePreviewDelegate?
     public var tappedViews: [UIImageView]?
-    public var currentIndex: Int = 0
+    public var currentIndex: Int = 0 {
+        didSet {
+            pageControl.currentPage = currentIndex
+        }
+    }
     public var placeholder: UIImage?
     public var canDelete: Bool = false
     public var itemSpacing: CGFloat = 10 {

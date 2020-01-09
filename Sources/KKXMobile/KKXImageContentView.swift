@@ -122,10 +122,8 @@ public class KKXImageContentView: UIView {
     @objc private func imageTapAction(_ sender: UIGestureRecognizer) {
         if let imageView = sender.view as? UIImageView,
             let index = imageViews.firstIndex(of: imageView) {
-            imageViews.filter { (imageView) -> Bool in
-                imageView.isHidden == false
-            }
-            imageTapClosure?(imageViews, index)
+            let imageV = imageViews.filter { $0.isHidden == false }
+            imageTapClosure?(imageV, index)
         }
     }
     

@@ -64,12 +64,11 @@ public class KKXImagePreviewVC: UIViewController {
         let pageControl = UIPageControl()
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         pageControl.currentPage = currentIndex
-        pageControl.numberOfPages = photoCount
         pageControl.hidesForSinglePage = true
         return pageControl
     }()
     
-    private let activityView: KKXActivityView = KKXActivityView()
+    private var activityView: KKXActivityView!
     private var statusBarHidden: Bool = true
     private var statusBarStyle: UIStatusBarStyle = UIApplication.shared.statusBarStyle
     private var originStatusBarHidden: Bool = true
@@ -118,6 +117,7 @@ public class KKXImagePreviewVC: UIViewController {
         collectionView.collectionViewLayout = layout
         collectionView.frame = CGRect(x: 0, y: 0, width: itemWidth, height: view.frame.size.height)
         collectionView.contentOffset = CGPoint(x: CGFloat(currentIndex)*itemWidth, y: 0)
+        activityView.frame = view.bounds
         
     }
     
@@ -133,6 +133,8 @@ public class KKXImagePreviewVC: UIViewController {
         collectionView.contentSize = CGSize(width: width, height: 0)
         view.addSubview(collectionView)
         
+        pageControl.numberOfPages = photoCount
+        pageControl.currentPage = currentIndex
         view.addSubview(pageControl)
         configureConstraint()
         
@@ -143,12 +145,14 @@ public class KKXImagePreviewVC: UIViewController {
         view.addGestureRecognizer(singleTapGesture)
         view.addGestureRecognizer(doubleTapGesture)
         singleTapGesture.require(toFail: doubleTapGesture)
+        
+        activityView = KKXActivityView(in: view)
+        view.addSubview(activityView)
     }
     
     private func configureConstraint() {
         let attributes: [NSLayoutConstraint.Attribute] = [
-            .leading,
-            .trailing,
+            .centerX,
             .bottom,
         ]
         for attribute in attributes {
@@ -216,6 +220,7 @@ public class KKXImagePreviewVC: UIViewController {
         present(alertController, animated: true, completion: nil)
     }
     
+    private var isFirst: Bool = true
     private func savePhoto(_ image: UIImage?, index: Int) {
         guard let _ = image else {
             return
@@ -224,7 +229,9 @@ public class KKXImagePreviewVC: UIViewController {
             switch status {
             case .authorized:
                 DispatchQueue.main.async {
-                    self.activityView.show(in: self.view)
+                    self.activityView.mode = .default
+                    self.activityView.text = ""
+                    self.activityView.show()
                 }
                 PHPhotoLibrary.shared().performChanges({
                     PHAssetChangeRequest.creationRequestForAsset(from: image!)
@@ -232,7 +239,7 @@ public class KKXImagePreviewVC: UIViewController {
                     DispatchQueue.main.async {
                         if success {
                             self.activityView.mode = .text
-                            self.activityView.label.text = "图片已保存到您的相册！"
+                            self.activityView.text = "图片已保存到您的相册！"
                         } else {
                             print("图片保存失败：" + (error?.localizedDescription ?? ""))
                         }

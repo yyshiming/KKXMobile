@@ -71,6 +71,7 @@ public class KKXImageScrollView: UIScrollView {
         let horizontalPadding = imageFitSize.width < scrollViewSize.width ? (scrollViewSize.width - imageFitSize.width)/2:0
         self.contentInset = UIEdgeInsets(top: verticalPadding, left: horizontalPadding, bottom: verticalPadding, right: horizontalPadding)
         setZoomScale(1.0, animated: true)
+        print(imageFitSize, bounds)
     }
     
     private func updateZoomContentInsets() {

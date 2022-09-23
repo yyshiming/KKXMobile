@@ -25,7 +25,11 @@ import UIKit
 ///     ----|keyboardAlignmentView
 open class KKXAlertController: KKXViewController {
 
-    // MARK: - -------- Public --------
+    public enum ClosePosition {
+        case none
+        case topLeft
+        case topRight
+    }
     
     /// 如果message、attributeMessage都设置，优先显示attributedMessage
     open var message: String?
@@ -48,7 +52,15 @@ open class KKXAlertController: KKXViewController {
     public let backgroundView = UIView()
     public let containerView = KKXAlertContainerView()
     
-    private(set) var actions: [KKXAlertAction] = []
+    public let closeButton = KKXExpandButton(type: .custom)
+    
+    public var closePosition: ClosePosition = .none {
+        didSet {
+            reloadCloseButtonConstant()
+        }
+    }
+    
+    public private(set) var actions: [KKXAlertAction] = []
     
     public func addAction(_ action: KKXAlertAction) {
         actions.append(action)
@@ -76,6 +88,7 @@ open class KKXAlertController: KKXViewController {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 17.0)
         label.textColor = .kkxAlphaBlack
+        label.numberOfLines = 0
         _titleLabel = label
         return label
     }
@@ -104,14 +117,24 @@ open class KKXAlertController: KKXViewController {
     
     private let keyboardAlignmentView = UIView()
     
+    private let containerRadius: CGFloat = 14
+    
     private let actionHeight: CGFloat = 44
         
+    private let closeButtonSize = CGSize(width: 40, height: 40)
+
     private var keyboardAlignmentHeight: NSLayoutConstraint?
+    
     private var containerTop: NSLayoutConstraint?
     private var containerBottom: NSLayoutConstraint?
     private var containerCenterY: NSLayoutConstraint?
     private var containerMaxHeight: NSLayoutConstraint?
     
+    private var titleLabelLeading: NSLayoutConstraint?
+    
+    private var closeButtonleading: NSLayoutConstraint?
+    private var closeButtonTrailing: NSLayoutConstraint?
+
     private var _observations: [NSKeyValueObservation] = []
         
     // MARK: - -------- View Life Cycle --------
@@ -162,7 +185,7 @@ open class KKXAlertController: KKXViewController {
     
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        reloadConstant()
+        reloadContainerConstraint()
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -180,7 +203,7 @@ open class KKXAlertController: KKXViewController {
         viewDidDisappearHandler?(animated)
     }
     
-    private func reloadConstant() {
+    private func reloadContainerConstraint() {
         let margin: CGFloat = 48
         var maxHeight = view.frame.height - margin
         if view.kkxSafeAreaInsets.top > 20 {
@@ -195,11 +218,40 @@ open class KKXAlertController: KKXViewController {
         containerBottom?.constant = -max(20, view.kkxSafeAreaInsets.bottom)
     }
     
+    private func reloadCloseButtonConstant() {
+        switch closePosition {
+        case .none:
+            closeButton.isHidden = true
+            titleLabelLeading?.isActive = false
+        case .topLeft:
+            closeButton.isHidden = false
+            closeButtonleading?.isActive = true
+            closeButtonTrailing?.isActive = false
+            
+            titleLabelLeading?.isActive = true
+        case .topRight:
+            closeButton.isHidden = false
+            closeButtonleading?.isActive = false
+            closeButtonTrailing?.isActive = true
+            
+            titleLabelLeading?.isActive = true
+        }
+    }
+    
+    private var closeButtonImage: UIImage? {
+        UIImage.itemImage(with: .init(style: .close, tintColor: .kkxSecondary, width: 12))
+    }
+    
     private func initSubviews() {
-        containerView.layer.cornerRadius = 14.0
+        containerView.layer.cornerRadius = containerRadius
         containerView.isUserInteractionEnabled = true
         containerView.clipsToBounds = true
         containerView.blur(.prominent)
+        
+        closeButton.setImage(closeButtonImage, for: .normal)
+        closeButton.addTarget(self, action: #selector(cancelAction), for: .touchUpInside)
+        closeButton.layer.cornerRadius = closeButtonSize.height / 2
+        closeButton.layer.masksToBounds = true
     }
     
     // MARK: - -------- Configuration --------
@@ -253,14 +305,14 @@ open class KKXAlertController: KKXViewController {
         // BackgroundView
         view.addSubview(backgroundView)
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint(item: backgroundView, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1.0, constant: 0).isActive = true
+        NSLayoutConstraint(item: backgroundView, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
         NSLayoutConstraint(item: backgroundView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1.0, constant: 0).isActive = true
         NSLayoutConstraint(item: backgroundView, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1.0, constant: 0).isActive = true
         
         // KeyboardAlignmentView
         view.addSubview(keyboardAlignmentView)
         keyboardAlignmentView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint(item: keyboardAlignmentView, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1.0, constant: 0).isActive = true
+        NSLayoutConstraint(item: keyboardAlignmentView, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
         NSLayoutConstraint(item: keyboardAlignmentView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1.0, constant: 0).isActive = true
         NSLayoutConstraint(item: keyboardAlignmentView, attribute: .top, relatedBy: .equal, toItem: backgroundView, attribute: .bottom, multiplier: 1.0, constant: 0).isActive = true
         NSLayoutConstraint(item: keyboardAlignmentView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: 0).isActive = true
@@ -295,7 +347,7 @@ open class KKXAlertController: KKXViewController {
             containerView.addSubview(scrollView)
             scrollView.translatesAutoresizingMaskIntoConstraints = false
             let attributes: [NSLayoutConstraint.Attribute] = [
-                .top, .left, .right
+                .top, .leading, .trailing
             ]
             for attribute in attributes {
                 NSLayoutConstraint(item: scrollView, attribute: attribute, relatedBy: .equal, toItem: containerView, attribute: attribute, multiplier: 1.0, constant: 0).isActive = true
@@ -305,9 +357,9 @@ open class KKXAlertController: KKXViewController {
             scrollView.addSubview(scrollContentView)
             scrollContentView.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint(item: scrollContentView, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1.0, constant: 0).isActive = true
-            NSLayoutConstraint(item: scrollContentView, attribute: .left, relatedBy: .equal, toItem: scrollView, attribute: .left, multiplier: 1.0, constant: 0).isActive = true
+            NSLayoutConstraint(item: scrollContentView, attribute: .leading, relatedBy: .equal, toItem: scrollView, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
             NSLayoutConstraint(item: scrollContentView, attribute: .bottom, relatedBy: .equal, toItem: scrollView, attribute: .bottom, multiplier: 1.0, constant: 0).isActive = true
-            NSLayoutConstraint(item: scrollContentView, attribute: .right, relatedBy: .equal, toItem: scrollView, attribute: .right, multiplier: 1.0, constant: 0).isActive = true
+            NSLayoutConstraint(item: scrollContentView, attribute: .trailing, relatedBy: .equal, toItem: scrollView, attribute: .trailing, multiplier: 1.0, constant: 0).isActive = true
             NSLayoutConstraint(item: scrollContentView, attribute: .centerX, relatedBy: .equal, toItem: scrollView, attribute: .centerX, multiplier: 1.0, constant: 0).isActive = true
             
             var seperaterTopConstraint: NSLayoutConstraint?
@@ -320,7 +372,7 @@ open class KKXAlertController: KKXViewController {
                 seperaterView.translatesAutoresizingMaskIntoConstraints = false
                 seperaterTopConstraint = NSLayoutConstraint(item: seperaterView, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .bottom, multiplier: 1.0, constant: seperaterTop)
                 seperaterTopConstraint?.isActive = true
-                NSLayoutConstraint(item: seperaterView, attribute: .left, relatedBy: .equal, toItem: containerView, attribute: .left, multiplier: 1.0, constant: 0).isActive = true
+                NSLayoutConstraint(item: seperaterView, attribute: .leading, relatedBy: .equal, toItem: containerView, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
                 NSLayoutConstraint(item: seperaterView, attribute: .centerX, relatedBy: .equal, toItem: containerView, attribute: .centerX, multiplier: 1.0, constant: 0).isActive = true
                 NSLayoutConstraint(item: seperaterView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: .pixel).isActive = true
                 
@@ -340,7 +392,8 @@ open class KKXAlertController: KKXViewController {
                 scrollContentView.addSubview(titleLabel)
                 titleLabel.translatesAutoresizingMaskIntoConstraints = false
                 NSLayoutConstraint(item: titleLabel, attribute: .top, relatedBy: .equal, toItem: scrollContentView, attribute: .top, multiplier: 1.0, constant: contentTop).isActive = true
-                NSLayoutConstraint(item: titleLabel, attribute: .left, relatedBy: .greaterThanOrEqual, toItem: scrollContentView, attribute: .left, multiplier: 1.0, constant: leftMargin).isActive = true
+                NSLayoutConstraint(item: titleLabel, attribute: .leading, relatedBy: .greaterThanOrEqual, toItem: scrollContentView, attribute: .leading, multiplier: 1.0, constant: leftMargin).isActive = true
+                titleLabelLeading = NSLayoutConstraint(item: titleLabel, attribute: .leading, relatedBy: .greaterThanOrEqual, toItem: scrollContentView, attribute: .leading, multiplier: 1.0, constant: closeButtonSize.width)
                 NSLayoutConstraint(item: titleLabel, attribute: .centerX, relatedBy: .equal, toItem: scrollContentView, attribute: .centerX, multiplier: 1.0, constant: 0).isActive = true
                 
                 bottomReferenceItem = titleLabel
@@ -353,7 +406,7 @@ open class KKXAlertController: KKXViewController {
                 scrollContentView.addSubview(messageLabel)
                 messageLabel.translatesAutoresizingMaskIntoConstraints = false
                 NSLayoutConstraint(item: messageLabel, attribute: .top, relatedBy: .equal, toItem: contentTopItem, attribute: contentTopItemAttribute, multiplier: 1.0, constant: contentSpacing).isActive = true
-                NSLayoutConstraint(item: messageLabel, attribute: .left, relatedBy: .greaterThanOrEqual, toItem: scrollContentView, attribute: .left, multiplier: 1.0, constant: leftMargin).isActive = true
+                NSLayoutConstraint(item: messageLabel, attribute: .leading, relatedBy: .greaterThanOrEqual, toItem: scrollContentView, attribute: .leading, multiplier: 1.0, constant: leftMargin).isActive = true
                 NSLayoutConstraint(item: messageLabel, attribute: .centerX, relatedBy: .equal, toItem: scrollContentView, attribute: .centerX, multiplier: 1.0, constant: 0).isActive = true
                 
                 bottomReferenceItem = messageLabel
@@ -368,7 +421,7 @@ open class KKXAlertController: KKXViewController {
                 scrollContentView.addSubview(customView)
                 customView.translatesAutoresizingMaskIntoConstraints = false
                 NSLayoutConstraint(item: customView, attribute: .top, relatedBy: .equal, toItem: contentTopItem, attribute: contentTopItemAttribute, multiplier: 1.0, constant: contentSpacing).isActive = true
-                NSLayoutConstraint(item: customView, attribute: .left, relatedBy: .equal, toItem: scrollContentView, attribute: .left, multiplier: 1.0, constant: 0).isActive = true
+                NSLayoutConstraint(item: customView, attribute: .leading, relatedBy: .equal, toItem: scrollContentView, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
                 let widthConstraint = NSLayoutConstraint(item: customView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: contentSize.width)
                 widthConstraint.priority = UILayoutPriority(rawValue: 999)
                 widthConstraint.isActive = true
@@ -391,7 +444,7 @@ open class KKXAlertController: KKXViewController {
             containerView.addSubview(actionStackView)
             actionStackView.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint(item: actionStackView, attribute: .top, relatedBy: .equal, toItem: buttonStackTopItem, attribute: buttonStackTopAttribute, multiplier: 1.0, constant: 0).isActive = true
-            NSLayoutConstraint(item: actionStackView, attribute: .left, relatedBy: .equal, toItem: containerView, attribute: .left, multiplier: 1.0, constant: 0).isActive = true
+            NSLayoutConstraint(item: actionStackView, attribute: .leading, relatedBy: .equal, toItem: containerView, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
             NSLayoutConstraint(item: actionStackView, attribute: .bottom, relatedBy: .equal, toItem: containerView, attribute: .bottom, multiplier: 1.0, constant: 0).isActive = true
             NSLayoutConstraint(item: actionStackView, attribute: .width, relatedBy: .equal, toItem: containerView, attribute: .width, multiplier: 1.0, constant: 0).isActive = true
             NSLayoutConstraint(item: actionStackView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: stackViewH).isActive = true
@@ -403,6 +456,17 @@ open class KKXAlertController: KKXViewController {
                 configureDefaultActions()
             }
         }
+        
+        // closeButton
+        containerView.addSubview(closeButton)
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint(item: closeButton, attribute: .top, relatedBy: .equal, toItem: containerView, attribute: .top, multiplier: 1.0, constant: 0).isActive = true
+        NSLayoutConstraint(item: closeButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: closeButtonSize.width).isActive = true
+        NSLayoutConstraint(item: closeButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: closeButtonSize.height).isActive = true
+        closeButtonleading = NSLayoutConstraint(item: closeButton, attribute: .leading, relatedBy: .equal, toItem: containerView, attribute: .leading, multiplier: 1.0, constant: 0)
+        closeButtonTrailing = NSLayoutConstraint(item: closeButton, attribute: .trailing, relatedBy: .equal, toItem: containerView, attribute: .trailing, multiplier: 1.0, constant: 0)
+        closeButtonTrailing?.isActive = true
+        reloadCloseButtonConstant()
     }
     
     private func configureDefaultActions() {
@@ -454,6 +518,7 @@ open class KKXAlertController: KKXViewController {
     open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         actions.forEach { $0.button.setBackgroundImage(UIColor.highlightBackground.image, for: .highlighted) }
+        closeButton.setImage(closeButtonImage, for: .normal)
     }
     
     open override var preferredStatusBarStyle: UIStatusBarStyle {

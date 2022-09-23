@@ -10,8 +10,10 @@ import UIKit
 
 open class KKXExpandButton: UIButton {
 
+    open var expandInset: UIEdgeInsets = .zero
+    
     open override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        bounds.insetBy(dx: -10, dy: -10).contains(point)
+        bounds.inset(by: expandInset.opposite()).contains(point)
     }
 
 }

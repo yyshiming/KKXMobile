@@ -43,11 +43,47 @@ open class KKXAlertController: KKXViewController {
     /// 是否点击半透明dismiss, 默认false
     open var dismissOnTaped: Bool = false
     
-    public var viewDidLoadHandler: (() -> Void)?
-    public var viewWillAppearHandler: ((Bool) -> Void)?
-    public var viewDidAppearHandler: ((Bool) -> Void)?
-    public var viewWillDisappearHandler: ((Bool) -> Void)?
-    public var viewDidDisappearHandler: ((Bool) -> Void)?
+    @discardableResult
+    public func onViewDidLoad(callback: @escaping () -> Void) -> Self {
+        _onViewDidLoad = callback
+        return self
+    }
+    private var _onViewDidLoad: (() -> Void)?
+    
+    @discardableResult
+    public func onViewWillAppear(callback: @escaping (Bool) -> Void) -> Self {
+        _onViewWillAppear = callback
+        return self
+    }
+    private var _onViewWillAppear: ((Bool) -> Void)?
+    
+    @discardableResult
+    public func onViewDidAppear(callback: @escaping (Bool) -> Void) -> Self {
+        _onViewDidAppear = callback
+        return self
+    }
+    private var _onViewDidAppear: ((Bool) -> Void)?
+    
+    @discardableResult
+    public func onViewWillDisappear(callback: @escaping (Bool) -> Void) -> Self {
+        _onViewWillDisappear = callback
+        return self
+    }
+    private var _onViewWillDisappear: ((Bool) -> Void)?
+    
+    @discardableResult
+    public func onViewDidDisappear(callback: @escaping (Bool) -> Void) -> Self {
+        _onViewDidDisappear = callback
+        return self
+    }
+    private var _onViewDidDisappear: ((Bool) -> Void)?
+    
+    @discardableResult
+    func onClose(callback: @escaping () -> Void) -> Self {
+        _onClose = callback
+        return self
+    }
+    private var _onClose: (() -> Void)?
     
     public let backgroundView = UIView()
     public let containerView = KKXAlertContainerView()
@@ -162,7 +198,7 @@ open class KKXAlertController: KKXViewController {
     
     open override func viewDidLoad() {
         super.viewDidLoad()
-        viewDidLoadHandler?()
+        _onViewDidLoad?()
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIView.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIView.keyboardWillHideNotification, object: nil)
@@ -180,7 +216,7 @@ open class KKXAlertController: KKXViewController {
     
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        viewWillAppearHandler?(animated)
+        _onViewWillAppear?(animated)
     }
     
     open override func viewDidLayoutSubviews() {
@@ -190,17 +226,17 @@ open class KKXAlertController: KKXViewController {
     
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        viewDidAppearHandler?(animated)
+        _onViewDidAppear?(animated)
     }
     
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        viewWillDisappearHandler?(animated)
+        _onViewWillDisappear?(animated)
     }
     
     open override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        viewDidDisappearHandler?(animated)
+        _onViewDidDisappear?(animated)
     }
     
     private func reloadContainerConstraint() {
@@ -561,6 +597,7 @@ open class KKXAlertController: KKXViewController {
     
     @objc private func cancelAction() {
         dismiss(animated: true, completion: nil)
+        _onClose?()
     }
     
     @objc private func tapAction() {

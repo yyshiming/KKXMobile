@@ -144,12 +144,7 @@ open class KKXSearchView: UIView {
     }
     
     open override var intrinsicContentSize: CGSize {
-        var width: CGFloat
-        if #available(iOS 13.0, *) {
-            width = window?.windowScene?.screen.bounds.width ?? 0
-        } else {
-            width = UIScreen.main.bounds.width
-        }
+        let width = kkxScreenBounds.width
         return CGSize(width: width, height: 44)
     }
     

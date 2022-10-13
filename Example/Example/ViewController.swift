@@ -8,7 +8,7 @@
 import UIKit
 import KKXMobile
 
-class ViewController: KKXViewController {
+class ViewController: KKXViewController, KKXCustomSearchView {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,6 +16,8 @@ class ViewController: KKXViewController {
         let scanItem = UIBarButtonItem(title: "扫一扫", style: .plain, target: self, action: #selector(scanAction))
         let alertItem = UIBarButtonItem(title: "弹框", style: .plain, target: self, action: #selector(alertAction))
         navigationItem.rightBarButtonItems = [alertItem, scanItem]
+        
+        navigationItem.titleView = searchView
     }
 
     @objc private func scanAction() {

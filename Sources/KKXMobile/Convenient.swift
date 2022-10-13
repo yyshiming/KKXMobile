@@ -61,6 +61,17 @@ public var kkxWindow: UIWindow? {
     }
 }
 
+/// 获取屏幕bounds
+public var kkxScreenBounds: CGRect {
+    var bounds: CGRect?
+    if #available(iOS 13.0, *) {
+        bounds = kkxWindow?.screen.bounds
+    } else {
+        bounds = UIScreen.main.bounds
+    }
+    return bounds ?? .zero
+}
+
 /// keyWindow安全区域
 ///
 ///     状态栏没有隐藏时
@@ -104,16 +115,32 @@ public var kkxTopViewController: UIViewController? {
     return controller
 }
 
+public enum PriceFormatStyle {
+    /// 自动根据金额，判断需要保留几位小数
+    case adjustment
+    /// 直接保留d位小数
+    case digits(d: Int)
+}
+
 /// 根据金额（分）返回format
 /// - Parameter price: 金额（分）
+/// - Parameter style: adjustment  | digits，默认adjustment
 /// - Returns: format
-public func kkxFormat(for price: Int) -> String {
-    var format = "%.2f"
-    if (price % 100 == 0) {
-        format = "%.0f"
-    } else if (price % 10 == 0) {
-        format = "%.1f"
+public func kkxFormat(forPrice price: Int, style: PriceFormatStyle = .adjustment) -> String {
+    let digits: Int
+    switch style {
+    case .adjustment:
+        if (price % 100 == 0) {
+            digits = 0
+        } else if (price % 10 == 0) {
+            digits = 1
+        } else {
+            digits = 2
+        }
+    case .digits(let d):
+        digits = d
     }
+    let format = "%.\(digits)f"
     return format
 }
 

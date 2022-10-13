@@ -37,6 +37,51 @@ public extension Date {
     }
 }
 
+public extension Date {
+    
+    enum AppropriateDateStyle {
+        case chinese
+        case character(c: String)
+    }
+    
+    /// 返回更直观的时间格式
+    /// - Parameter dateStyle: 年月日格式，默认chinese（ yyyy年MM月dd日）。如果是character("-")，格式为：yyyy-MM-dd
+    /// - Parameter timeValue: 时分秒格式，默认HH:mm
+    /// - Returns: 时间字符串
+    func appropriateValue(with dateStyle: Date.AppropriateDateStyle = .chinese, timeValue: String = "HH:mm") -> String {
+        let value: String
+        if isToday {
+            value = "今天 \(timeValue)"
+        }
+        else if isYesterday {
+            value = "昨天 \(timeValue)"
+        }
+        else if year == Date().year {
+            let dateValue: String
+            switch dateStyle {
+            case .chinese:
+                dateValue = "MM月dd日"
+            case .character(let c):
+                dateValue = "MM\(c)dd"
+            }
+            value = "\(dateValue) \(timeValue)"
+        }
+        else {
+            let dateValue: String
+            switch dateStyle {
+            case .chinese:
+                dateValue = "yyyy年MM月dd日"
+            case .character(let c):
+                dateValue = "yyyy\(c)MM\(c)dd"
+            }
+            value = "\(dateValue) \(timeValue)"
+        }
+        
+        let format = Date.Formatter(rawValue: value)
+        return stringValue(format)
+    }
+}
+
 public let kkxCalendar = Calendar.current
 
 /// 周日为第一天

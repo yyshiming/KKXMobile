@@ -10,9 +10,9 @@ import UIKit
 extension Int {
     public static let aSecond: Int = 1
     public static let aMinute: Int = 60
-    public static let aHour: Int   = 60 * 60
-    public static let aDay: Int    = 60 * 60 * 24
-    public static let aWeek: Int   = 60 * 60 * 24 * 7
+    public static let aHour: Int   = 3600
+    public static let aDay: Int    = 86400
+    public static let aWeek: Int   = 604800
 }
 
 extension Double {
@@ -37,5 +37,17 @@ extension Double {
         }
         let date = Date(timeIntervalSince1970: self/1000.0)
         return dateFormater.string(from: date)
+    }
+}
+
+extension Double {
+    
+    /// 返回更直观的时间格式
+    /// - Parameter dateStyle: 年月日格式，默认chinese（ yyyy年MM月dd日）。如果是character("-")，格式为：yyyy-MM-dd
+    /// - Parameter timeValue: 时分秒格式，默认HH:mm
+    /// - Returns: 时间字符串
+    func appropriateValue(with dateStyle: Date.AppropriateDateStyle = .chinese, timeValue: String = "HH:mm") -> String {
+        let date = Date(timeIntervalSince1970: self / 1000)
+        return date.appropriateValue(with: dateStyle, timeValue: timeValue)
     }
 }

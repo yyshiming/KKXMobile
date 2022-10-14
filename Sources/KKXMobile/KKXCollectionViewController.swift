@@ -107,14 +107,14 @@ open class KKXCollectionViewController: KKXViewController, UICollectionViewDeleg
     }
 }
 
-extension KKXCollectionViewController: KKXKeyboardShowHide {
+extension KKXCollectionViewController: KKXKeyboardShowHideProtocol {
     
     public var aScrollView: UIScrollView {
         _collectionView
     }
 }
 
-extension KKXCollectionViewController: KKXAdjustmentBehavior {
+extension KKXCollectionViewController: KKXAdjustmentBehaviorProtocol {
     
     public var kkxAdjustsScrollViewInsets: Bool {
         get {

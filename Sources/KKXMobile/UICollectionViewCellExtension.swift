@@ -7,8 +7,18 @@
 
 import UIKit
 
-extension UICollectionViewCell: KKXIndexPath {
+extension UICollectionViewCell {
 
+    public var kkxIndexPath: IndexPath? {
+        get {
+            let obj = objc_getAssociatedObject(self, &kkxIndexPathKey) as? IndexPath
+            return obj
+        }
+        set {
+            objc_setAssociatedObject(self, &kkxIndexPathKey, newValue, .OBJC_ASSOCIATION_COPY_NONATOMIC)
+        }
+    }
+    
     public var deleteAction: ((IndexPath?) -> Void)? {
         get {
             let action = objc_getAssociatedObject(self, &deleteActionKey) as? ((IndexPath?) -> Void)
@@ -31,5 +41,7 @@ extension UICollectionViewCell: KKXIndexPath {
     }
     
 }
+
+private var kkxIndexPathKey: UInt8 = 0
 private var deleteActionKey: UInt8 = 0
 

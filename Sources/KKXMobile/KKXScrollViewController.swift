@@ -114,14 +114,14 @@ open class KKXScrollViewController: KKXViewController, UIGestureRecognizerDelega
     }
 }
 
-extension KKXScrollViewController: KKXKeyboardShowHide {
+extension KKXScrollViewController: KKXKeyboardShowHideProtocol {
     
     public var aScrollView: UIScrollView {
         scrollView
     }
 }
 
-extension KKXScrollViewController: KKXAdjustmentBehavior {
+extension KKXScrollViewController: KKXAdjustmentBehaviorProtocol {
     
     public var kkxAdjustsScrollViewInsets: Bool {
         get {

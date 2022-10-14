@@ -13,13 +13,54 @@ class ViewController: KKXViewController, KKXCustomSearchView {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let scanItem = UIBarButtonItem(title: "扫一扫", style: .plain, target: self, action: #selector(scanAction))
-        let alertItem = UIBarButtonItem(title: "弹框", style: .plain, target: self, action: #selector(alertAction))
-        navigationItem.rightBarButtonItems = [alertItem, scanItem]
+        isNavigationBarHidden = true
+        view.addSubview(kkxNavigationBar)
+        kkxNavigationBar.titleLabel.text = "KKXMobile"
         
-        navigationItem.titleView = searchView
+        kkxNavigationBar.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint(item: kkxNavigationBar, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1.0, constant: 0.0).isActive = true
+        NSLayoutConstraint(item: kkxNavigationBar, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0.0).isActive = true
+        NSLayoutConstraint(item: kkxNavigationBar, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0.0).isActive = true
+        
+        let scanButton = UIButton(type: .system)
+        scanButton.setTitle("扫一扫", for: .normal)
+        scanButton.setTitleColor(.black, for: .normal)
+        scanButton.titleLabel?.font = .systemFont(ofSize: 16)
+        
+        scanButton.addTarget(self, action: #selector(scanAction), for: .touchUpInside)
+        
+        let alertButton = UIButton(type: .system)
+        alertButton.setTitleColor(.black, for: .normal)
+        alertButton.setTitle("弹框", for: .normal)
+        alertButton.titleLabel?.font = .systemFont(ofSize: 16)
+        alertButton.addTarget(self, action: #selector(alertAction), for: .touchUpInside)
+        
+        kkxNavigationBar.titleLabel.text = "KKXMobile"
+        kkxNavigationBar.rightItems = [alertButton, scanButton]
+        
+        testGradient()
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+    }
+
+    private func testGradient() {
+        let gradientView = UIView()
+        view.addSubview(gradientView)
+        gradientView.frame = CGRect(x: 20, y: 200, width: 200, height: 200)
+
+        gradientView
+            .maskedCorners(.init(maskedCorners: .all, cornerRadius: 20))
+            .gradient(
+                .init(
+                    colors: [.rgba(242, 219, 178), .rgba(238, 191, 120)],
+                    startPoint: .init(x: 0, y: 0.5),
+                    endPoint: .init(x: 1, y: 0.5)
+                )
+            )
+    }
+    
     @objc private func scanAction() {
         let controller = KKXScanViewController()
         navigationController?.pushViewController(controller, animated: true)

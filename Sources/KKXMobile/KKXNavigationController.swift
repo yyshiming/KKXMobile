@@ -7,7 +7,7 @@
 
 import UIKit
 
-open class KKXNavigationController: UINavigationController, KKXCustomNavigationBar {
+open class KKXNavigationController: UINavigationController, KKXCustomNavigationBarProtocol {
 
     deinit {
         kkxDeinitLog()
@@ -91,7 +91,7 @@ open class KKXNavigationController: UINavigationController, KKXCustomNavigationB
 extension KKXNavigationController {
     
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        if viewController is KKXCustomNavigationBar {
+        if viewController is KKXCustomNavigationBarProtocol {
             let isHidden = viewController.isNavigationBarHidden
             navigationController.setNavigationBarHidden(isHidden, animated: animated)
         }

@@ -8,33 +8,51 @@
 import UIKit
 
 /// 在ipad上运行时，右上角添加取消item的viewController需要实现的协议
-public protocol KKXCustomCancelItemOnIpad: NSObjectProtocol { }
+public protocol KKXShowCancelItemOnIpadProtocol: NSObjectProtocol { }
 
 /// 自定义导航栏
-public protocol KKXCustomNavigationBar: NSObjectProtocol { }
+public protocol KKXCustomNavigationBarProtocol: NSObjectProtocol {
+    
+    /// 自定义导航栏
+    var kkxNavigationBar: KKXCustomNavigationBar { get }
+}
+extension KKXCustomNavigationBarProtocol where Self: UIViewController {
+    
+    /// 自定义导航栏
+    public var kkxNavigationBar: KKXCustomNavigationBar {
+        var obj = objc_getAssociatedObject(self, &kkxNavigationBarKey) as? KKXCustomNavigationBar
+        if obj == nil {
+            let newObj = KKXCustomNavigationBar()
+            
+            objc_setAssociatedObject(self, &kkxNavigationBarKey, newObj, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            obj = newObj
+        }
+        return obj!
+    }
+}
+private var kkxNavigationBarKey: UInt8 = 0
 
 /// 自定义返回按钮
-public protocol KKXCustomBackItem: NSObjectProtocol { }
+public protocol KKXCustomBackItemProtocol: NSObjectProtocol { }
 
 /// 刷新数据
 public protocol KKXReloadDataProtocol: NSObjectProtocol {
     func kkxReloadData(_ isRefresh: Bool)
 }
 
-
-public protocol KKXAdjustmentBehavior {
+public protocol KKXAdjustmentBehaviorProtocol {
     var kkxAdjustsScrollViewInsets: Bool { get set }
 }
 
 // MARK: - 数据对象转字典
 
 /// 数据对象转字典
-public protocol KKXModelToDictionary {
+public protocol KKXModelToDictionaryProtocol {
     
     func dictValue() -> [String: Any]
 }
 
-extension KKXModelToDictionary where Self: Encodable {
+extension KKXModelToDictionaryProtocol where Self: Encodable {
     
     public func dictValue() -> [String: Any] {
         let encoder = JSONEncoder()
@@ -51,33 +69,10 @@ extension KKXModelToDictionary where Self: Encodable {
     }
 }
 
-// MARK: - IndexPath传参用
-
-public protocol KKXIndexPath {
-    
-    /// 可用于UITableViewCell、UICollectionViewCell传参数
-    var kkxIndexPath: IndexPath? { get set }
-}
-
-extension KKXIndexPath {
-    
-    public var kkxIndexPath: IndexPath? {
-        get {
-            let indexPath = objc_getAssociatedObject(self, &indexPathKey) as? IndexPath
-            return indexPath
-        }
-        set {
-            objc_setAssociatedObject(self, &indexPathKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-}
-private var indexPathKey: UInt8 = 0
-
-
 // MARK: - 键盘显示/隐藏时，修改scrollView的contentInset.bottom
 
 /// 键盘显示/隐藏时，修改scrollView的contentInset.bottom，使得scrollView滚动时可以显示所有内容
-public protocol KKXKeyboardShowHide: NSObjectProtocol {
+public protocol KKXKeyboardShowHideProtocol: NSObjectProtocol {
     
     /// scrollView，必须实现的
     var aScrollView: UIScrollView { get }
@@ -92,7 +87,7 @@ public protocol KKXKeyboardShowHide: NSObjectProtocol {
     func removeKeyboardObserver()
 }
 
-extension KKXKeyboardShowHide {
+extension KKXKeyboardShowHideProtocol {
     
     public var isKeyboardShow: Bool {
         _isKeyboardShow
@@ -168,12 +163,12 @@ private var isKeyboardShowKey: UInt8 = 0
  
 // MARK: - 视频时长转字符串
 /// 视频时长转字符串
-public protocol KKXVideoDuration {
+public protocol KKXVideoDurationProtocol {
     /// 视频时长（秒）转字符串（00:00:00）
     func videoDuration() -> String
 }
 
-extension Int: KKXVideoDuration {
+extension Int: KKXVideoDurationProtocol {
     public func videoDuration() -> String {
         let formater = "%.2d"
         let duration = self
@@ -193,18 +188,18 @@ extension Int: KKXVideoDuration {
         return durationString
     }
 }
-extension Double: KKXVideoDuration {
+extension Double: KKXVideoDurationProtocol {
     public func videoDuration() -> String {
         Int(self).videoDuration()
     }
 }
-extension Float: KKXVideoDuration {
+extension Float: KKXVideoDurationProtocol {
     public func videoDuration() -> String {
         Int(self).videoDuration()
     }
 }
 
-extension CGFloat: KKXVideoDuration {
+extension CGFloat: KKXVideoDurationProtocol {
     public func videoDuration() -> String {
         Int(self).videoDuration()
     }

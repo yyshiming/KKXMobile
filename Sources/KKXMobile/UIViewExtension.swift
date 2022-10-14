@@ -284,9 +284,26 @@ extension UIView {
 }
 
 // MARK: - ======== Add GradientLayer ========
+
+public struct GradientConfiguration {
+    
+    public init(colors: [UIColor]? = nil, locations: [NSNumber]? = nil, startPoint: CGPoint = CGPoint(x: 0.5, y: 0.0), endPoint: CGPoint = CGPoint(x: 0.5, y: 1.0), type: CAGradientLayerType = .axial) {
+        self.colors = colors
+        self.locations = locations
+        self.startPoint = startPoint
+        self.endPoint = endPoint
+        self.type = type
+    }
+    
+    public var colors: [UIColor]?
+    public var locations: [NSNumber]?
+    public var startPoint: CGPoint = CGPoint(x: 0.5, y: 0.0)
+    public var endPoint: CGPoint = CGPoint(x: 0.5, y: 1.0)
+    public var type: CAGradientLayerType = .axial
+}
 extension UIView {
     
-    private var gradientLayer: CAGradientLayer {
+    public var gradientLayer: CAGradientLayer {
         guard let gradientLayer = objc_getAssociatedObject(self, &gradientLayerKey) as? CAGradientLayer else {
             let gradientLayer = CAGradientLayer()
             layer.insertSublayer(gradientLayer, at: 0)
@@ -294,10 +311,10 @@ extension UIView {
             
             observations["gradientLayer.frame"] = observe(\.frame, options: [.new, .old]) { (object, change) in
                 guard change.newValue?.size != change.oldValue?.size else { return }
-                gradientLayer.frame = object.bounds
+                object.updateGradientLayer()
             }
-            observations["gradientLayer.bounds"] = observe(\.bounds) { (object, change) in
-                gradientLayer.frame = object.bounds
+            observations["gradientLayer.bounds"] = observe(\.bounds) { (object, _) in
+                object.updateGradientLayer()
             }
             return gradientLayer
         }
@@ -313,16 +330,35 @@ extension UIView {
     ///   - type: 默认 axial
     /// - Returns: Self
     @discardableResult
-    public func gradient(colors: [UIColor]? = nil, locations: [NSNumber]? = nil, startPoint: CGPoint = CGPoint(x: 0.5, y: 0.0), endPoint: CGPoint = CGPoint(x: 0.5, y: 1.0), type: CAGradientLayerType = .axial) -> Self {
-        gradientLayer.colors = colors?.map { $0.cgColor }
-        gradientLayer.locations = locations
-        gradientLayer.startPoint = startPoint
-        gradientLayer.endPoint = endPoint
-        gradientLayer.type = type
+    public func gradient(_ gradientConfig: GradientConfiguration) -> Self {
+        gradientObject = gradientConfig
+        updateGradientLayer()
         return self
+    }
+    
+    private var gradientObject: GradientConfiguration? {
+        get {
+            objc_getAssociatedObject(self, &gradientObjectKey) as? GradientConfiguration
+        }
+        set {
+            objc_setAssociatedObject(self, &gradientObjectKey, newValue, .OBJC_ASSOCIATION_COPY_NONATOMIC)
+        }
+    }
+    
+    private func updateGradientLayer() {
+        gradientLayer.frame = bounds
+        guard let object = gradientObject else {
+            return
+        }
+        gradientLayer.colors = object.colors?.map { $0.cgColor }
+        gradientLayer.locations = object.locations
+        gradientLayer.startPoint = object.startPoint
+        gradientLayer.endPoint = object.endPoint
+        gradientLayer.type = object.type
     }
 }
 private var gradientLayerKey: UInt8 = 0
+private var gradientObjectKey: UInt8 = 0
 
 
 // MARK: - ======== Add MaskedCorner ========
@@ -333,7 +369,6 @@ public struct CornerMask : OptionSet {
         self.rawValue = rawValue
     }
     
-    public static let none     = CornerMask([])
     public static let minXMinY = CornerMask(rawValue: 1 << 0)
     public static let maxXMinY = CornerMask(rawValue: 1 << 1)
     public static let minXMaxY = CornerMask(rawValue: 1 << 2)
@@ -343,7 +378,7 @@ public struct CornerMask : OptionSet {
 
 public struct MaskedCornerConfiguration {
     
-    public init(maskedCorners: CornerMask = .none, cornerRadius: CGFloat = 0, strokeWidth: CGFloat = 0, strokeColor: UIColor = .white, fillColor: UIColor = .white) {
+    public init(maskedCorners: CornerMask = [], cornerRadius: CGFloat = 0, strokeWidth: CGFloat = 0, strokeColor: UIColor = .white, fillColor: UIColor = .white) {
         self.maskedCorners = maskedCorners
         self.cornerRadius = cornerRadius
         self.strokeWidth = strokeWidth
@@ -351,7 +386,7 @@ public struct MaskedCornerConfiguration {
         self.fillColor = fillColor
     }
     
-    public var maskedCorners: CornerMask = .none
+    public var maskedCorners: CornerMask = []
     public var cornerRadius: CGFloat = 0
     public var strokeWidth: CGFloat = 0
     public var strokeColor: UIColor = .white
@@ -370,7 +405,7 @@ extension UIView {
         return self
     }
     
-    private var maskedCornerLayer: CAShapeLayer {
+    public var maskedCornerLayer: CAShapeLayer {
         guard let shapeLayer = objc_getAssociatedObject(self, &maskedCornerLayerKey) as? CAShapeLayer else {
             let shapeLayer = CAShapeLayer()
             objc_setAssociatedObject(self, &maskedCornerLayerKey, shapeLayer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -380,10 +415,9 @@ extension UIView {
                 object.updateMaskedLayerPath()
             }
             
-            observations["maskedCornerLayer.bounds"] = observe(\.bounds) { (object, change) in
+            observations["maskedCornerLayer.bounds"] = observe(\.bounds) { (object, _) in
                 object.updateMaskedLayerPath()
             }
-            layer.insertSublayer(shapeLayer, at: 0)
             return shapeLayer
         }
         return shapeLayer
@@ -409,72 +443,89 @@ extension UIView {
         let strokeColor = object.strokeColor
         let fillColor = object.fillColor
         
-        let path = UIBezierPath()
-        path.lineWidth = strokeWidth
+//        let path = UIBezierPath()
+//        path.lineWidth = strokeWidth
+//
+//        let minXMinYCenter = CGPoint(x: cornerRadius, y: cornerRadius)
+//        let maxXMinYCenter = CGPoint(x: frame.width - cornerRadius, y: cornerRadius)
+//        let maxXMaxYCenter = CGPoint(x: frame.width - cornerRadius, y: frame.height - cornerRadius)
+//        let minXMaxYCenter = CGPoint(x: cornerRadius, y: frame.height - cornerRadius)
+//
+//        let minXMinYPoint: CGPoint = .zero
+//        let maxXMinYPoint: CGPoint = CGPoint(x: frame.width, y: 0)
+//        let maxXMaxYPoint: CGPoint = CGPoint(x: frame.width, y: frame.height)
+//        let minXMaxYPoint: CGPoint = CGPoint(x: 0, y: frame.height)
+//
+//        let topPoint1: CGPoint = CGPoint(x: cornerRadius, y: 0)
+//        let topPoint2: CGPoint = CGPoint(x: frame.width - cornerRadius, y: 0)
+//
+//        let rightPoint1: CGPoint = CGPoint(x: frame.width, y: cornerRadius)
+//        let rightPoint2: CGPoint = CGPoint(x: frame.width, y: frame.height - cornerRadius)
+//
+//        let bottomPoint1: CGPoint = CGPoint(x: frame.width - cornerRadius, y: frame.height)
+//        let bottomPoint2: CGPoint = CGPoint(x: cornerRadius, y: frame.height)
+//
+//        let leftPoint1: CGPoint = CGPoint(x: 0, y: frame.height - cornerRadius)
+//        let leftPoint2: CGPoint = CGPoint(x: 0, y: cornerRadius)
+//
+//        path.move(to: leftPoint2)
+//        if maskedCorners.contains(.minXMinY) {
+//            path.addArc(withCenter: minXMinYCenter, radius: cornerRadius, startAngle: .pi, endAngle: .pi*3/2, clockwise: true)
+//        } else {
+//            path.addLine(to: minXMinYPoint)
+//            path.addLine(to: topPoint1)
+//        }
+//
+//        path.addLine(to: topPoint2)
+//
+//        if maskedCorners.contains(.maxXMinY) {
+//            path.addArc(withCenter: maxXMinYCenter, radius: cornerRadius, startAngle: -.pi/2, endAngle: 0, clockwise: true)
+//        } else {
+//            path.addLine(to: maxXMinYPoint)
+//            path.addLine(to: rightPoint1)
+//        }
+//
+//        path.addLine(to: rightPoint2)
+//
+//        if maskedCorners.contains(.maxXMaxY) {
+//            path.addArc(withCenter: maxXMaxYCenter, radius: cornerRadius, startAngle: 0, endAngle: .pi/2, clockwise: true)
+//        } else {
+//            path.addLine(to: maxXMaxYPoint)
+//            path.addLine(to: bottomPoint1)
+//        }
+//
+//        path.addLine(to: bottomPoint2)
+//
+//        if maskedCorners.contains(.minXMaxY) {
+//            path.addArc(withCenter: minXMaxYCenter, radius: cornerRadius, startAngle: .pi/2, endAngle: .pi, clockwise: true)
+//        } else {
+//            path.addLine(to: minXMaxYPoint)
+//            path.addLine(to: leftPoint1)
+//        }
+//
+//        path.addLine(to: leftPoint2)
         
-        let minXMinYCenter = CGPoint(x: cornerRadius, y: cornerRadius)
-        let maxXMinYCenter = CGPoint(x: frame.width - cornerRadius, y: cornerRadius)
-        let maxXMaxYCenter = CGPoint(x: frame.width - cornerRadius, y: frame.height - cornerRadius)
-        let minXMaxYCenter = CGPoint(x: cornerRadius, y: frame.height - cornerRadius)
-        
-        let minXMinYPoint: CGPoint = .zero
-        let maxXMinYPoint: CGPoint = CGPoint(x: frame.width, y: 0)
-        let maxXMaxYPoint: CGPoint = CGPoint(x: frame.width, y: frame.height)
-        let minXMaxYPoint: CGPoint = CGPoint(x: 0, y: frame.height)
-        
-        let topPoint1: CGPoint = CGPoint(x: cornerRadius, y: 0)
-        let topPoint2: CGPoint = CGPoint(x: frame.width - cornerRadius, y: 0)
-        
-        let rightPoint1: CGPoint = CGPoint(x: frame.width, y: cornerRadius)
-        let rightPoint2: CGPoint = CGPoint(x: frame.width, y: frame.height - cornerRadius)
-        
-        let bottomPoint1: CGPoint = CGPoint(x: frame.width - cornerRadius, y: frame.height)
-        let bottomPoint2: CGPoint = CGPoint(x: cornerRadius, y: frame.height)
-        
-        let leftPoint1: CGPoint = CGPoint(x: 0, y: frame.height - cornerRadius)
-        let leftPoint2: CGPoint = CGPoint(x: 0, y: cornerRadius)
-        
-        path.move(to: leftPoint2)
+        var corners: UIRectCorner = []
         if maskedCorners.contains(.minXMinY) {
-            path.addArc(withCenter: minXMinYCenter, radius: cornerRadius, startAngle: .pi, endAngle: .pi*3/2, clockwise: true)
-        } else {
-            path.addLine(to: minXMinYPoint)
-            path.addLine(to: topPoint1)
+            corners.insert(.topLeft)
         }
-        
-        path.addLine(to: topPoint2)
-        
-        if maskedCorners.contains(.maxXMinY) {
-            path.addArc(withCenter: maxXMinYCenter, radius: cornerRadius, startAngle: -.pi/2, endAngle: 0, clockwise: true)
-        } else {
-            path.addLine(to: maxXMinYPoint)
-            path.addLine(to: rightPoint1)
-        }
-        
-        path.addLine(to: rightPoint2)
-
-        if maskedCorners.contains(.maxXMaxY) {
-            path.addArc(withCenter: maxXMaxYCenter, radius: cornerRadius, startAngle: 0, endAngle: .pi/2, clockwise: true)
-        } else {
-            path.addLine(to: maxXMaxYPoint)
-            path.addLine(to: bottomPoint1)
-        }
-        
-        path.addLine(to: bottomPoint2)
-        
         if maskedCorners.contains(.minXMaxY) {
-            path.addArc(withCenter: minXMaxYCenter, radius: cornerRadius, startAngle: .pi/2, endAngle: .pi, clockwise: true)
-        } else {
-            path.addLine(to: minXMaxYPoint)
-            path.addLine(to: leftPoint1)
+            corners.insert(.topRight)
         }
-        
-        path.addLine(to: leftPoint2)
-        
+        if maskedCorners.contains(.maxXMinY) {
+            corners.insert(.bottomLeft)
+        }
+        if maskedCorners.contains(.maxXMaxY) {
+            corners.insert(.bottomRight)
+        }
+        let cornerPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: cornerRadius, height: 0))
+
         maskedCornerLayer.strokeColor = strokeColor.cgColor
         maskedCornerLayer.fillColor = fillColor.cgColor
         maskedCornerLayer.lineWidth = strokeWidth
-        maskedCornerLayer.path = path.cgPath
+        maskedCornerLayer.path = cornerPath.cgPath
+        
+        layer.mask = maskedCornerLayer
     }
 }
 private var maskedCornerLayerKey: UInt8 = 0

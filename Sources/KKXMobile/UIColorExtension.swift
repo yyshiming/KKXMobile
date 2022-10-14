@@ -96,6 +96,16 @@ extension UIColor {
         self.init(red: red, green: green, blue: blue, transparent: trans)
     }
     
+    /// 创建一个RGBA color
+    /// - Parameters:
+    ///   - r: 0 - 255
+    ///   - g: 0 - 255
+    ///   - b: 0 - 255
+    ///   - a: 0 - 1
+    /// - Returns: UIColor
+    public static func rgba(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat = 1.0) -> UIColor {
+        return UIColor(red: r/255.0, green: g/255.0, blue: b/255.0, alpha: a)
+    }
 }
 
 /// systemGray    dark:  #8E8E93 (142, 142, 147) light:  #8E8E93 (142, 142, 147)

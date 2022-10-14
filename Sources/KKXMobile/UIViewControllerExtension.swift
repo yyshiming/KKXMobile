@@ -343,7 +343,7 @@ extension UIViewController {
 extension UIViewController {
     
     @objc private func kkxViewDidLoad() {
-        if self is KKXCustomBackItem {
+        if self is KKXCustomBackItemProtocol {
             if navigationController?.viewControllers.first == self { return }
             if let backItemImage = defaultConfiguration.customBackBarButtonItemImage {
                 let backItem = UIBarButtonItem(image: backItemImage, style: .plain, target: nil, action: nil)
@@ -353,7 +353,7 @@ extension UIViewController {
                 navigationItem.leftBarButtonItem = backItem
             }
         }
-        if self is KKXCustomCancelItemOnIpad, isPad {
+        if self is KKXShowCancelItemOnIpadProtocol, isPad {
             navigationItem.rightBarButtonItem = kkxCancelItem
         }
         
@@ -361,7 +361,7 @@ extension UIViewController {
     }
     
     @objc private func kkxViewWillAppear(_ animated: Bool) {
-        if self is KKXCustomNavigationBar {
+        if self is KKXCustomNavigationBarProtocol {
             applyNavigationBarStyle(kkxNavigationBarStyle)
         }
         kkxIsVisible = true
@@ -378,7 +378,7 @@ extension UIViewController {
         self.kkxViewWillDisappear(animated)
     }
     
-    @objc private func kkxBackItemAction() {
+    @objc public func kkxBackItemAction() {
         if kkxBackItemHandler != nil {
             kkxBackItemHandler?()
         } else {

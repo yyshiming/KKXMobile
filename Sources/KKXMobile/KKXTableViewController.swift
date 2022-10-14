@@ -7,7 +7,7 @@
 
 import UIKit
 
-open class KKXTableViewController: UITableViewController, KKXCustomNavigationBar, KKXCustomBackItem {
+open class KKXTableViewController: UITableViewController, KKXCustomNavigationBarProtocol, KKXCustomBackItemProtocol {
     
     deinit {
         kkxDeinitLog()
@@ -51,7 +51,7 @@ open class KKXTableViewController: UITableViewController, KKXCustomNavigationBar
     }
 }
 
-extension KKXTableViewController: KKXAdjustmentBehavior {
+extension KKXTableViewController: KKXAdjustmentBehaviorProtocol {
     
     public var kkxAdjustsScrollViewInsets: Bool {
         get {

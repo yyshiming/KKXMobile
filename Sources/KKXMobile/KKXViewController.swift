@@ -7,12 +7,12 @@
 
 import UIKit
 
-open class KKXViewController: UIViewController, KKXCustomNavigationBar, KKXCustomBackItem {
+open class KKXViewController: UIViewController, KKXCustomNavigationBarProtocol, KKXCustomBackItemProtocol {
 
     deinit {
         kkxDeinitLog()
     }
-    
+        
     open override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = defaultConfiguration.mainBackground

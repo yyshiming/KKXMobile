@@ -81,6 +81,7 @@
 		3A530D2C28DC44EE00486ABA /* scan.line.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A530D2828DC44EE00486ABA /* scan.line.png */; };
 		3A530D2D28DC44EE00486ABA /* scan.photo.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A530D2928DC44EE00486ABA /* scan.photo.png */; };
 		3A530D2E28DC44EE00486ABA /* scan.flash.on.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A530D2A28DC44EE00486ABA /* scan.flash.on.png */; };
+		3A74DA4828F90D89009830A8 /* KKXCustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A74DA4728F90D89009830A8 /* KKXCustomNavigationBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -170,6 +171,7 @@
 		3A530D2828DC44EE00486ABA /* scan.line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = scan.line.png; sourceTree = "<group>"; };
 		3A530D2928DC44EE00486ABA /* scan.photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = scan.photo.png; sourceTree = "<group>"; };
 		3A530D2A28DC44EE00486ABA /* scan.flash.on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = scan.flash.on.png; sourceTree = "<group>"; };
+		3A74DA4728F90D89009830A8 /* KKXCustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KKXCustomNavigationBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -265,29 +267,29 @@
 		3A530CEE28DC2FE100486ABA /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				3A530CB328DC2FB800486ABA /* DateExtension.swift */,
-				3A530C8128DC2FB800486ABA /* UIEdgeInsetsExtension.swift */,
-				3A530C8728DC2FB800486ABA /* UIColorExtension.swift */,
-				3A530C8928DC2FB800486ABA /* UITextViewExtension.swift */,
-				3A530C8A28DC2FB800486ABA /* NSObjectExtension.swift */,
-				3A530C8E28DC2FB800486ABA /* TimerExtension.swift */,
-				3A530C9028DC2FB800486ABA /* UITextFieldExtension.swift */,
-				3A530C9128DC2FB800486ABA /* UICollectionViewCellExtension.swift */,
-				3A530C9228DC2FB800486ABA /* WKWebViewExtension.swift */,
-				3A530C9828DC2FB800486ABA /* KKXExtension.swift */,
-				3A530C9928DC2FB800486ABA /* UIViewControllerExtension.swift */,
 				3A530C9A28DC2FB800486ABA /* BundleExtension.swift */,
-				3A530C9B28DC2FB800486ABA /* UITableViewExtension.swift */,
-				3A530C9D28DC2FB800486ABA /* UIViewExtension.swift */,
-				3A530CA028DC2FB800486ABA /* TimeIntervalExtension.swift */,
-				3A530CA528DC2FB800486ABA /* UIDeviceExtension.swift */,
-				3A530CA628DC2FB800486ABA /* UICollectionViewExtension.swift */,
-				3A530CA928DC2FB800486ABA /* UITabBarControllerExtension.swift */,
-				3A530CAA28DC2FB800486ABA /* UINavigationControllerExtension.swift */,
+				3A530CB328DC2FB800486ABA /* DateExtension.swift */,
 				3A530CAB28DC2FB800486ABA /* DispatchQueueExtension.swift */,
+				3A530C9828DC2FB800486ABA /* KKXExtension.swift */,
+				3A530C8A28DC2FB800486ABA /* NSObjectExtension.swift */,
 				3A530CAC28DC2FB800486ABA /* StringExtension.swift */,
-				3A530CAE28DC2FB800486ABA /* UIScrollViewExtension.swift */,
+				3A530CA028DC2FB800486ABA /* TimeIntervalExtension.swift */,
+				3A530C8E28DC2FB800486ABA /* TimerExtension.swift */,
+				3A530C9128DC2FB800486ABA /* UICollectionViewCellExtension.swift */,
+				3A530CA628DC2FB800486ABA /* UICollectionViewExtension.swift */,
+				3A530C8728DC2FB800486ABA /* UIColorExtension.swift */,
+				3A530CA528DC2FB800486ABA /* UIDeviceExtension.swift */,
+				3A530C8128DC2FB800486ABA /* UIEdgeInsetsExtension.swift */,
 				3A530CB028DC2FB800486ABA /* UIImageExtension.swift */,
+				3A530CAA28DC2FB800486ABA /* UINavigationControllerExtension.swift */,
+				3A530CAE28DC2FB800486ABA /* UIScrollViewExtension.swift */,
+				3A530CA928DC2FB800486ABA /* UITabBarControllerExtension.swift */,
+				3A530C9B28DC2FB800486ABA /* UITableViewExtension.swift */,
+				3A530C9028DC2FB800486ABA /* UITextFieldExtension.swift */,
+				3A530C8928DC2FB800486ABA /* UITextViewExtension.swift */,
+				3A530C9928DC2FB800486ABA /* UIViewControllerExtension.swift */,
+				3A530C9D28DC2FB800486ABA /* UIViewExtension.swift */,
+				3A530C9228DC2FB800486ABA /* WKWebViewExtension.swift */,
 			);
 			name = Extension;
 			sourceTree = "<group>";
@@ -295,19 +297,20 @@
 		3A530CF028DC308100486ABA /* View */ = {
 			isa = PBXGroup;
 			children = (
-				3A530C8228DC2FB800486ABA /* KKXCountingLabel.swift */,
-				3A530C8428DC2FB800486ABA /* KKXInputView.swift */,
-				3A530C8828DC2FB800486ABA /* KKXMobile.swift */,
-				3A530C9C28DC2FB800486ABA /* KKXTextField.swift */,
+				3A530CB128DC2FB800486ABA /* KKXBadgeView.swift */,
 				3A530C9F28DC2FB800486ABA /* KKXCollectionViewCell.swift */,
-				3A530CA128DC2FB800486ABA /* KKXTableViewCell.swift */,
-				3A530CA328DC2FB800486ABA /* KKXTextView.swift */,
+				3A530C8228DC2FB800486ABA /* KKXCountingLabel.swift */,
+				3A74DA4728F90D89009830A8 /* KKXCustomNavigationBar.swift */,
+				3A530C8D28DC2FB800486ABA /* KKXEmptyDataView.swift */,
 				3A530CA728DC2FB800486ABA /* KKXExpandButton.swift */,
 				3A530CA828DC2FB800486ABA /* KKXFlowLayout.swift */,
 				3A530CAD28DC2FB800486ABA /* KKXInputLabel.swift */,
-				3A530CB128DC2FB800486ABA /* KKXBadgeView.swift */,
+				3A530C8428DC2FB800486ABA /* KKXInputView.swift */,
+				3A530C8828DC2FB800486ABA /* KKXMobile.swift */,
+				3A530CA128DC2FB800486ABA /* KKXTableViewCell.swift */,
+				3A530C9C28DC2FB800486ABA /* KKXTextField.swift */,
 				3A530CB528DC2FB800486ABA /* KKXTextLabelView.swift */,
-				3A530C8D28DC2FB800486ABA /* KKXEmptyDataView.swift */,
+				3A530CA328DC2FB800486ABA /* KKXTextView.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -539,6 +542,7 @@
 				3A530D1028DC31D600486ABA /* KKXScanResultController.swift in Sources */,
 				3A530D0428DC31BA00486ABA /* KKXSearchKeysLayout.swift in Sources */,
 				3A530CFF28DC31BA00486ABA /* KKXSearchView.swift in Sources */,
+				3A74DA4828F90D89009830A8 /* KKXCustomNavigationBar.swift in Sources */,
 				3A530CCD28DC2FB900486ABA /* KKXScrollViewController.swift in Sources */,
 				3A530CC228DC2FB900486ABA /* UITextViewExtension.swift in Sources */,
 				3A530CBA28DC2FB900486ABA /* UIEdgeInsetsExtension.swift in Sources */,

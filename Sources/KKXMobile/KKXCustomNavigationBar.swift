@@ -104,6 +104,13 @@ open class KKXCustomNavigationBar: UIView {
     }
     
     
+    @discardableResult
+    public func onBackTap(callback: @escaping () -> Void) -> Self {
+        _onBackTap = callback
+        return self
+    }
+    private var _onBackTap: (() -> Void)?
+    
     private let _leftItemsStackView = UIStackView()
 
     private let _rightItemsStackView = UIStackView()
@@ -152,6 +159,7 @@ open class KKXCustomNavigationBar: UIView {
         let backImage = config.customBackBarButtonItemImage ?? config.defaultBackImage
         backButton.setImage(backImage, for: .normal)
         backButton.tintColor = UIColor.kkxBlack
+        backButton.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
         
         titleLabel.font = .boldSystemFont(ofSize: 18)
         titleLabel.textColor = .kkxAlphaBlack
@@ -216,6 +224,10 @@ open class KKXCustomNavigationBar: UIView {
     open override var intrinsicContentSize: CGSize {
         let height = contentHeight + kkxSafeAreaInsets.top
         return CGSize(width: kkxScreenBounds.width, height: height)
+    }
+    
+    @objc private func backButtonAction() {
+        _onBackTap?()
     }
 }
 

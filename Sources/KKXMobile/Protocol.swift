@@ -23,7 +23,9 @@ extension KKXCustomNavigationBarProtocol where Self: UIViewController {
         var obj = objc_getAssociatedObject(self, &kkxNavigationBarKey) as? KKXCustomNavigationBar
         if obj == nil {
             let newObj = KKXCustomNavigationBar()
-            
+            newObj.onBackTap { [weak self] in
+                self?.kkxBackItemAction()
+            }
             objc_setAssociatedObject(self, &kkxNavigationBarKey, newObj, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             obj = newObj
         }

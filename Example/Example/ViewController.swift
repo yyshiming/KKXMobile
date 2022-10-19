@@ -8,8 +8,22 @@
 import UIKit
 import KKXMobile
 
-class ViewController: KKXViewController, KKXCustomSearchView {
-
+class ViewController: KKXViewController, KKXCustomSearchView, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, CollectionViewDelegate {
+    
+    private lazy var collectionView: UICollectionView = {
+        let layout = KKXFlowLayout()
+        layout.decorationConfiguration = .init(maskedCornerConfiguration: .init(maskedCorners: .all, cornerRadius: 10), backgroundColor: .green)
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        collectionView.contentInset = UIEdgeInsets(value: 10)
+        collectionView.kkx_register(UICollectionViewCell.self)
+        
+        return collectionView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,6 +53,15 @@ class ViewController: KKXViewController, KKXCustomSearchView {
         kkxNavigationBar.rightItems = [alertButton, scanButton]
         
         testGradient()
+        
+        view.addSubview(collectionView)
+        collectionView.backgroundColor = .red
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint(item: collectionView, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0.0).isActive = true
+        NSLayoutConstraint(item: collectionView, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0.0).isActive = true
+        NSLayoutConstraint(item: collectionView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
+        NSLayoutConstraint(item: collectionView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 500.0).isActive = true
+
     }
 
     override func viewDidLayoutSubviews() {
@@ -80,5 +103,21 @@ class ViewController: KKXViewController, KKXCustomSearchView {
         controller.addActions([confirmAction, cancelAction])
         present(controller, animated: true)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.kkx_dequeueReusableCell(UICollectionViewCell.self, for: indexPath)
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, hasDecorationViewAt section: Int) -> Bool {
+        true
+    }
+    
+    
 }
 

@@ -243,6 +243,7 @@ private class DecorationView: UICollectionReusableView {
         super.apply(layoutAttributes)
         if let attributes = layoutAttributes as? LayoutAttributes {
             maskedCorners(attributes.maskedCornerConfiguration)
+            backgroundColor = attributes.backgrounColor
         }
     }
 }

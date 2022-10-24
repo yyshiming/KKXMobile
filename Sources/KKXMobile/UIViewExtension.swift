@@ -369,11 +369,11 @@ public struct CornerMask : OptionSet {
         self.rawValue = rawValue
     }
     
-    public static let minXMinY = CornerMask(rawValue: 1 << 0)
-    public static let maxXMinY = CornerMask(rawValue: 1 << 1)
-    public static let minXMaxY = CornerMask(rawValue: 1 << 2)
-    public static let maxXMaxY = CornerMask(rawValue: 1 << 3)
-    public static let all: CornerMask = [.minXMinY, .maxXMinY, .minXMaxY, .maxXMaxY]
+    public static let topLeft = CornerMask(rawValue: 1 << 0)
+    public static let topRight = CornerMask(rawValue: 1 << 1)
+    public static let bottomLeft = CornerMask(rawValue: 1 << 2)
+    public static let bottomRight = CornerMask(rawValue: 1 << 3)
+    public static let all: CornerMask = [.topLeft, .topRight, .bottomLeft, .bottomRight]
 }
 
 public struct MaskedCornerConfiguration {
@@ -443,79 +443,17 @@ extension UIView {
         let strokeColor = object.strokeColor
         let fillColor = object.fillColor
         
-//        let path = UIBezierPath()
-//        path.lineWidth = strokeWidth
-//
-//        let minXMinYCenter = CGPoint(x: cornerRadius, y: cornerRadius)
-//        let maxXMinYCenter = CGPoint(x: frame.width - cornerRadius, y: cornerRadius)
-//        let maxXMaxYCenter = CGPoint(x: frame.width - cornerRadius, y: frame.height - cornerRadius)
-//        let minXMaxYCenter = CGPoint(x: cornerRadius, y: frame.height - cornerRadius)
-//
-//        let minXMinYPoint: CGPoint = .zero
-//        let maxXMinYPoint: CGPoint = CGPoint(x: frame.width, y: 0)
-//        let maxXMaxYPoint: CGPoint = CGPoint(x: frame.width, y: frame.height)
-//        let minXMaxYPoint: CGPoint = CGPoint(x: 0, y: frame.height)
-//
-//        let topPoint1: CGPoint = CGPoint(x: cornerRadius, y: 0)
-//        let topPoint2: CGPoint = CGPoint(x: frame.width - cornerRadius, y: 0)
-//
-//        let rightPoint1: CGPoint = CGPoint(x: frame.width, y: cornerRadius)
-//        let rightPoint2: CGPoint = CGPoint(x: frame.width, y: frame.height - cornerRadius)
-//
-//        let bottomPoint1: CGPoint = CGPoint(x: frame.width - cornerRadius, y: frame.height)
-//        let bottomPoint2: CGPoint = CGPoint(x: cornerRadius, y: frame.height)
-//
-//        let leftPoint1: CGPoint = CGPoint(x: 0, y: frame.height - cornerRadius)
-//        let leftPoint2: CGPoint = CGPoint(x: 0, y: cornerRadius)
-//
-//        path.move(to: leftPoint2)
-//        if maskedCorners.contains(.minXMinY) {
-//            path.addArc(withCenter: minXMinYCenter, radius: cornerRadius, startAngle: .pi, endAngle: .pi*3/2, clockwise: true)
-//        } else {
-//            path.addLine(to: minXMinYPoint)
-//            path.addLine(to: topPoint1)
-//        }
-//
-//        path.addLine(to: topPoint2)
-//
-//        if maskedCorners.contains(.maxXMinY) {
-//            path.addArc(withCenter: maxXMinYCenter, radius: cornerRadius, startAngle: -.pi/2, endAngle: 0, clockwise: true)
-//        } else {
-//            path.addLine(to: maxXMinYPoint)
-//            path.addLine(to: rightPoint1)
-//        }
-//
-//        path.addLine(to: rightPoint2)
-//
-//        if maskedCorners.contains(.maxXMaxY) {
-//            path.addArc(withCenter: maxXMaxYCenter, radius: cornerRadius, startAngle: 0, endAngle: .pi/2, clockwise: true)
-//        } else {
-//            path.addLine(to: maxXMaxYPoint)
-//            path.addLine(to: bottomPoint1)
-//        }
-//
-//        path.addLine(to: bottomPoint2)
-//
-//        if maskedCorners.contains(.minXMaxY) {
-//            path.addArc(withCenter: minXMaxYCenter, radius: cornerRadius, startAngle: .pi/2, endAngle: .pi, clockwise: true)
-//        } else {
-//            path.addLine(to: minXMaxYPoint)
-//            path.addLine(to: leftPoint1)
-//        }
-//
-//        path.addLine(to: leftPoint2)
-        
         var corners: UIRectCorner = []
-        if maskedCorners.contains(.minXMinY) {
+        if maskedCorners.contains(.topLeft) {
             corners.insert(.topLeft)
         }
-        if maskedCorners.contains(.minXMaxY) {
+        if maskedCorners.contains(.topRight) {
             corners.insert(.topRight)
         }
-        if maskedCorners.contains(.maxXMinY) {
+        if maskedCorners.contains(.bottomLeft) {
             corners.insert(.bottomLeft)
         }
-        if maskedCorners.contains(.maxXMaxY) {
+        if maskedCorners.contains(.bottomRight) {
             corners.insert(.bottomRight)
         }
         let cornerPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: cornerRadius, height: 0))

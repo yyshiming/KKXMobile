@@ -69,19 +69,20 @@ class ViewController: KKXViewController, KKXCustomSearchView, UICollectionViewDe
     }
 
     private func testGradient() {
-        let gradientView = UIView()
+        let gradientView = UIImageView()
         view.addSubview(gradientView)
-        gradientView.frame = CGRect(x: 20, y: 200, width: 200, height: 200)
+        gradientView.frame = CGRect(x: 20, y: 180, width: 200, height: 200)
 
-        gradientView
-            .maskedCorners(.init(maskedCorners: .all, cornerRadius: 20))
-            .gradient(
-                .init(
-                    colors: [.rgba(242, 219, 178), .rgba(238, 191, 120)],
-                    startPoint: .init(x: 0, y: 0.5),
-                    endPoint: .init(x: 1, y: 0.5)
-                )
-            )
+        gradientView.image = UIColor.rgba(8, 83, 213).image(CGSize(width: 200, height: 200), radius: 8, strokeColor: .rgba(61, 120, 234))
+//        gradientView
+//            .maskedCorners(.init(maskedCorners: .all, cornerRadius: 20))
+//            .gradient(
+//                .init(
+//                    colors: [.rgba(242, 219, 178), .rgba(238, 191, 120)],
+//                    startPoint: .init(x: 0, y: 0.5),
+//                    endPoint: .init(x: 1, y: 0.5)
+//                )
+//            )
     }
     
     @objc private func scanAction() {

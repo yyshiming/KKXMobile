@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'shiming' => 'zhangshiming86@163.com' }
-  s.source           = { :git => 'git@github.com:yyshiming/KKXMobiile.git', :tag => s.version.to_s }
+  s.source           = { :git => 'git@github.com:yyshiming/KKXMobile.git', :tag => s.version.to_s }
   
   s.requires_arc = true
   

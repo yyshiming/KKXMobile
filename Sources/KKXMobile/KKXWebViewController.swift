@@ -410,7 +410,7 @@ open class KKXWebViewController: KKXViewController, WKUIDelegate, WKNavigationDe
     // MARK: ======== WKNavigationDelegate ========
     
     /// 发送请求之前，决定是否跳转
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Swift.Void) {
+    open func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Swift.Void) {
         let requestUrl = navigationAction.request.url
         let urlString = requestUrl?.absoluteString ?? ""
         kkxPrint("decidePolicyFor:")
@@ -424,7 +424,7 @@ open class KKXWebViewController: KKXViewController, WKUIDelegate, WKNavigationDe
     }
     
     @available(iOS 13.0, *)
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
+    open func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
         let requestUrl = navigationAction.request.url
         let urlString = requestUrl?.absoluteString ?? ""
         kkxPrint("decidePolicyFor:")
@@ -438,35 +438,35 @@ open class KKXWebViewController: KKXViewController, WKUIDelegate, WKNavigationDe
     }
     
     /// 收到响应之后，决定是否跳转
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Swift.Void) {
+    open func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Swift.Void) {
         decisionHandler(.allow)
     }
     
     /// 页面开始加载
-    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    open func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         if showActivity {
             view.kkxLoading = true
         }
     }
     
     /// 接收到服务器跳转请求
-    public func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
+    open func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
         kkxPrint("webView didReceiveServerRedirectForProvisionalNavigation")
     }
     
     /// 页面加载失败
-    public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+    open func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         kkxPrint("webView didFailProvisionalNavigation", error)
     }
     
     /// 内容开始返回
-    public func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+    open func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
         
     }
     
     
     /// 页面加载完成
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    open func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         if showActivity { view.kkxLoading = false }
         
         kkxPrint("webView didFinish navigation")
@@ -487,12 +487,12 @@ open class KKXWebViewController: KKXViewController, WKUIDelegate, WKNavigationDe
     }
     
     /// 页面加载失败
-    public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+    open func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         kkxPrint("webView didFail navigation")
         if showActivity { view.kkxLoading = false }
     }
     
-    public func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Swift.Void) {
+    open func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Swift.Void) {
         if challenge.protectionSpace.authenticationMethod != NSURLAuthenticationMethodServerTrust {
             completionHandler(.performDefaultHandling, nil)
         } else {
@@ -501,11 +501,11 @@ open class KKXWebViewController: KKXViewController, WKUIDelegate, WKNavigationDe
     }
     
     @available(iOS 9.0, *)
-    public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+    open func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         kkxPrint("webContent process did terminate")
     }
     
-    public func webView(_ webView: WKWebView, authenticationChallenge challenge: URLAuthenticationChallenge, shouldAllowDeprecatedTLS decisionHandler: @escaping (Bool) -> Void) {
+    open func webView(_ webView: WKWebView, authenticationChallenge challenge: URLAuthenticationChallenge, shouldAllowDeprecatedTLS decisionHandler: @escaping (Bool) -> Void) {
         decisionHandler(false)
     }
     
@@ -521,7 +521,7 @@ open class KKXWebViewController: KKXViewController, WKUIDelegate, WKNavigationDe
 
     // MARK: ======== WKUIDelegate ========
     
-    public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+    open func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         
         kkxPrint("webView createWebViewWith")
         if navigationAction.targetFrame?.isMainFrame != true {
@@ -530,12 +530,12 @@ open class KKXWebViewController: KKXViewController, WKUIDelegate, WKNavigationDe
         return nil
     }
     
-    public func webViewDidClose(_ webView: WKWebView) {
+    open func webViewDidClose(_ webView: WKWebView) {
         kkxPrint("webViewDidClose")
     }
     
     /// 警告框
-    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+    open func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
         let action = UIAlertAction.init(title: KKXExtensionString("ok"), style: .default) { (action) in
             completionHandler()
         }
@@ -544,7 +544,7 @@ open class KKXWebViewController: KKXViewController, WKUIDelegate, WKNavigationDe
     
     
     /// 确认框
-    public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+    open func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
         let action = UIAlertAction.init(title: KKXExtensionString("ok"), style: .default) { (action) in
             completionHandler(true)
         }
@@ -552,7 +552,7 @@ open class KKXWebViewController: KKXViewController, WKUIDelegate, WKNavigationDe
     }
     
     /// 输入框
-    public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
+    open func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
         if customPrompt.keys.contains(prompt) {
             completionHandler(customPrompt[prompt])
         } else {
@@ -574,50 +574,50 @@ open class KKXWebViewController: KKXViewController, WKUIDelegate, WKNavigationDe
     }
     
     @available(iOS 13.0, *)
-    public func webView(_ webView: WKWebView, shouldPreviewElement elementInfo: WKContextMenuElementInfo) -> Bool {
+    open func webView(_ webView: WKWebView, shouldPreviewElement elementInfo: WKContextMenuElementInfo) -> Bool {
         true
     }
     
     @available(iOS 13.0, *)
-    public func webView(_ webView: WKWebView, previewingViewControllerForElement elementInfo: WKContextMenuElementInfo, defaultActions previewActions: [WKPreviewActionItem]) -> UIViewController? {
+    open func webView(_ webView: WKWebView, previewingViewControllerForElement elementInfo: WKContextMenuElementInfo, defaultActions previewActions: [WKPreviewActionItem]) -> UIViewController? {
         nil
     }
     
-    public func webView(_ webView: WKWebView, shouldPreviewElement elementInfo: WKPreviewElementInfo) -> Bool {
+    open func webView(_ webView: WKWebView, shouldPreviewElement elementInfo: WKPreviewElementInfo) -> Bool {
         true
     }
     
-    public func webView(_ webView: WKWebView, previewingViewControllerForElement elementInfo: WKPreviewElementInfo, defaultActions previewActions: [WKPreviewActionItem]) -> UIViewController? {
+    open func webView(_ webView: WKWebView, previewingViewControllerForElement elementInfo: WKPreviewElementInfo, defaultActions previewActions: [WKPreviewActionItem]) -> UIViewController? {
         nil
     }
     
-    public func webView(_ webView: WKWebView, commitPreviewingViewController previewingViewController: UIViewController) {
+    open func webView(_ webView: WKWebView, commitPreviewingViewController previewingViewController: UIViewController) {
         
     }
     
     @available(iOS 13.0, *)
-    public func webView(_ webView: WKWebView, contextMenuConfigurationForElement elementInfo: WKContextMenuElementInfo, completionHandler: @escaping (UIContextMenuConfiguration?) -> Void) {
+    open func webView(_ webView: WKWebView, contextMenuConfigurationForElement elementInfo: WKContextMenuElementInfo, completionHandler: @escaping (UIContextMenuConfiguration?) -> Void) {
         completionHandler(nil)
     }
     
     @available(iOS 13.0, *)
-    public func webView(_ webView: WKWebView, contextMenuWillPresentForElement elementInfo: WKContextMenuElementInfo) {
+    open func webView(_ webView: WKWebView, contextMenuWillPresentForElement elementInfo: WKContextMenuElementInfo) {
         
     }
     
     @available(iOS 13.0, *)
-    public func webView(_ webView: WKWebView, contextMenuForElement elementInfo: WKContextMenuElementInfo, willCommitWithAnimator animator: UIContextMenuInteractionCommitAnimating) {
+    open func webView(_ webView: WKWebView, contextMenuForElement elementInfo: WKContextMenuElementInfo, willCommitWithAnimator animator: UIContextMenuInteractionCommitAnimating) {
         
     }
     
     @available(iOS 13.0, *)
-    public func webView(_ webView: WKWebView, contextMenuDidEndForElement elementInfo: WKContextMenuElementInfo) {
+    open func webView(_ webView: WKWebView, contextMenuDidEndForElement elementInfo: WKContextMenuElementInfo) {
         
     }
     
     // MARK: - WKScriptMessageHandler
     
-    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    open func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         kkxPrint(message)
     }
 }

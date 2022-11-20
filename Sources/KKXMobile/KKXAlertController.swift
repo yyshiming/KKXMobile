@@ -659,6 +659,19 @@ open class KKXAlertAction: NSObject {
 
 public class KKXActionButton: UIButton {
     
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        configuration()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        configuration()
+    }
+    
+    private func configuration() {
+        setTitleColor(.kkxSystemBlue, for: .normal)
+    }
 }
 
 private extension UIColor {

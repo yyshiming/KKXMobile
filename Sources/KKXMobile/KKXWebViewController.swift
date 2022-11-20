@@ -10,7 +10,7 @@ import WebKit
 
 public typealias WebViewInterceptCallback = (KKXWebViewController, WKNavigationAction) -> WKNavigationActionPolicy
 
-open class KKXWebViewController: KKXViewController {
+open class KKXWebViewController: KKXViewController, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler {
     
     // MARK: -------- Properties --------
     
@@ -288,7 +288,8 @@ open class KKXWebViewController: KKXViewController {
         goBackItem.isEnabled = webView.canGoBack
         goForwardItem.isEnabled = webView.canGoForward
         toolBar.isHidden = !_isShowToolBar
-        var webViewHeight = view.bounds.height
+        let webViewTop = view.safeAreaInsets.top
+        var webViewHeight = view.bounds.height - webViewTop
         if !toolBar.isHidden {
             let offset = -view.kkxSafeAreaInsets.bottom / 2
             goBackItem.setBackgroundVerticalPositionAdjustment(offset, for: .default)
@@ -297,7 +298,7 @@ open class KKXWebViewController: KKXViewController {
             webViewHeight -= toolBarHeight
         }
         
-        webView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: webViewHeight)
+        webView.frame = CGRect(x: 0, y: webViewTop, width: view.bounds.width, height: webViewHeight)
     }
     
     // MARK: -------- Configuration --------
@@ -405,16 +406,15 @@ open class KKXWebViewController: KKXViewController {
     @objc private func refreshAction() {
         reload()
     }
-}
 
-// MARK: ======== WKNavigationDelegate ========
-
-extension KKXWebViewController: WKNavigationDelegate {
+    // MARK: ======== WKNavigationDelegate ========
     
     /// 发送请求之前，决定是否跳转
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Swift.Void) {
         let requestUrl = navigationAction.request.url
         let urlString = requestUrl?.absoluteString ?? ""
+        kkxPrint("decidePolicyFor:")
+        kkxPrint("    ", urlString)
         if let callback = interceptCallback(for: urlString) {
             let actionPolicy = callback(self, navigationAction)
             decisionHandler(actionPolicy)
@@ -427,6 +427,8 @@ extension KKXWebViewController: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
         let requestUrl = navigationAction.request.url
         let urlString = requestUrl?.absoluteString ?? ""
+        kkxPrint("decidePolicyFor:")
+        kkxPrint("    ", urlString)
         if let callback = interceptCallback(for: urlString) {
             let actionPolicy = callback(self, navigationAction)
             decisionHandler(actionPolicy, preferences)
@@ -516,11 +518,8 @@ extension KKXWebViewController: WKNavigationDelegate {
 //    public func webView(_ webView: WKWebView, navigationResponse: WKNavigationResponse, didBecome download: WKDownload) {
 //        
 //    }
-}
 
-// MARK: ======== WKUIDelegate ========
-
-extension KKXWebViewController: WKUIDelegate {
+    // MARK: ======== WKUIDelegate ========
     
     public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         
@@ -614,6 +613,12 @@ extension KKXWebViewController: WKUIDelegate {
     @available(iOS 13.0, *)
     public func webView(_ webView: WKWebView, contextMenuDidEndForElement elementInfo: WKContextMenuElementInfo) {
         
+    }
+    
+    // MARK: - WKScriptMessageHandler
+    
+    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        kkxPrint(message)
     }
 }
 

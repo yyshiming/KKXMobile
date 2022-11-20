@@ -378,19 +378,13 @@ public struct CornerMask : OptionSet {
 
 public struct MaskedCornerConfiguration {
     
-    public init(maskedCorners: CornerMask = [], cornerRadius: CGFloat = 0, strokeWidth: CGFloat = 0, strokeColor: UIColor = .white, fillColor: UIColor = .white) {
+    public init(maskedCorners: CornerMask = [], cornerRadius: CGFloat = 0) {
         self.maskedCorners = maskedCorners
         self.cornerRadius = cornerRadius
-        self.strokeWidth = strokeWidth
-        self.strokeColor = strokeColor
-        self.fillColor = fillColor
     }
     
     public var maskedCorners: CornerMask = []
     public var cornerRadius: CGFloat = 0
-    public var strokeWidth: CGFloat = 0
-    public var strokeColor: UIColor = .white
-    public var fillColor: UIColor = .white
 }
 
 extension UIView {
@@ -438,10 +432,7 @@ extension UIView {
             return
         }
         let maskedCorners = object.maskedCorners
-        let strokeWidth = object.strokeWidth
         let cornerRadius = object.cornerRadius
-        let strokeColor = object.strokeColor
-        let fillColor = object.fillColor
         
         var corners: UIRectCorner = []
         if maskedCorners.contains(.topLeft) {
@@ -456,11 +447,7 @@ extension UIView {
         if maskedCorners.contains(.bottomRight) {
             corners.insert(.bottomRight)
         }
-        let cornerPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: cornerRadius, height: 0))
-
-        maskedCornerLayer.strokeColor = strokeColor.cgColor
-        maskedCornerLayer.fillColor = fillColor.cgColor
-        maskedCornerLayer.lineWidth = strokeWidth
+        let cornerPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         maskedCornerLayer.path = cornerPath.cgPath
         
         layer.mask = maskedCornerLayer

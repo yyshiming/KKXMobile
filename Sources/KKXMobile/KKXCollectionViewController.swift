@@ -21,8 +21,7 @@ open class KKXCollectionViewController: KKXViewController, UICollectionViewDeleg
         set {
             _collectionView.removeFromSuperview()
             _collectionView = newValue
-            view.addSubview(newValue)
-            reloadViewConstraints()
+            reloadCollectionViewConstraints()
         }
     }
     
@@ -54,16 +53,13 @@ open class KKXCollectionViewController: KKXViewController, UICollectionViewDeleg
         collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: reusableIdentifier)
         collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: reusableIdentifier)
         
-        if collectionView.superview == nil {
-            view.addSubview(collectionView)
-        }
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.alwaysBounceVertical = true
         
-        reloadViewConstraints()
+        reloadCollectionViewConstraints()
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -76,7 +72,10 @@ open class KKXCollectionViewController: KKXViewController, UICollectionViewDeleg
         removeKeyboardObserver()
     }
     
-    private func reloadViewConstraints() {
+    open func reloadCollectionViewConstraints() {
+        if collectionView.superview == nil {
+            view.addSubview(collectionView)
+        }
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         let attributes: [NSLayoutConstraint.Attribute] = [
             .top, .left, .bottom, .right
